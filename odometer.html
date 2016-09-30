@@ -48,11 +48,8 @@
       function toggle() {
         if (playing) {
           pause();
-          $('#toggle').html('&#9654;');
-        }
-        else {
+        } else {
           play();
-          $('#toggle').html('&#9611;&#9611;');
         }
       };
 
@@ -61,6 +58,7 @@
           playing=true;
           clearTimeout(lastTimeout);
           update();
+          $('#toggle').html('&#9611;&#9611;');
         }
       };
 
@@ -92,7 +90,10 @@
       };
 
       function pause() {
-        playing=false;
+        if (playing) {
+          playing=false;
+          $('#toggle').html('&#9654;');
+        }
       }
 
       function reset() {
