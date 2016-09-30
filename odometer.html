@@ -116,6 +116,7 @@
       function pause() {
         if (playing) {
           playing=false;
+          number--;
           clearTimeout(lastTimeout);
           $('#toggle').html('&#9654;');
         }
@@ -151,6 +152,8 @@
         } else {
           number--;
         }
+        if (number < 0)
+          number=0;
         update();
       }
 
