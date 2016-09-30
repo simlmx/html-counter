@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <style>
+      button {
+        font-size:3em;
+        margin:0.1em;
+        width:2em;
+        text-align:'center';
+      }
+      #odometer * {
+        font-size:7em;
+        background-color:'darkgrey';
+        border:3px solid black;
+        margin:0.03em;
+      }
+      #slider {
+        width:20em;
+      }
+    </style>
+  </head>
+  <body>
+    <div style='text-align:center'>
+      <div id=odometer>
+      </div>
+      <div>
+        <button id=toggle onClick='toggle()'>
+          &#9654;
+        </button>
+        <button onClick='reset()'>
+          &#8635;
+        </button>
+      </div>
+      <div>
+        <input id=slider type="range"  min="1" max="100" value=10
+               onInput="updateSpeed(this.value)"/>
+        <p id=speed></p>
+      </div>
+    </div>
+    <script>
+      var number = 0;
+      // TODO this value is duplicated in the slider
+      var speed = 10;
+      var playing = false;
+      var lastTimeout;
+
+      function toggle() {
+        if (playing) {
+          pause();
+          $('#toggle').html('&#9654;');
+        }
+        else {
+          play();
+          $('#toggle').html('&#9611;&#9611;');
+        }
+      };
+
+      function play () {
+        if (!playing) {
+          playing=true;
+          clearTimeout(lastTimeout);
+          update();
+        }
+      };
+
+      function update() {
+        // convert the number into an array of digits
+        var nbs = [];
+        var j=number;
+        while (j>0) {
+          new_nb = j % 10;
+          nbs.unshift(new_nb);
+          j -= new_nb;
+          j /= 10;
+        }
+        while (nbs.length < 3) {
+          nbs.unshift(0);
+        }
+
+        var odo = $('#odometer');
+        odo.empty();
+        $.each(nbs, function(index, val) {
+          $('<span />', {'text': val}).appendTo(odo);
+        });
+
+        if (playing) {
+          console.log(speed);
+          number++;
+          lastTimeout = setTimeout(update, speed);
+        }
+      };
+
+      function pause() {
+        playing=false;
+      }
+
+      function reset() {
+        pause();
+        number=0;
+        // in case there was one scheduled
+        clearTimeout(lastTimeout);
+        update();
+      };
+
+      function updateSpeed(newvalue) {
+        speed = 1000. / newvalue;
+        $('#speed').text(speed);
+      }
+
+      update();
+    </script>
+  </body>
+</html>
