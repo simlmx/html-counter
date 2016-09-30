@@ -9,6 +9,9 @@
         width:2em;
         text-align:'center';
       }
+      button.small {
+        font-size:1.2em;
+      }
       #odometer * {
         font-size:7em;
         background-color:'darkgrey';
@@ -24,14 +27,28 @@
     <div style='text-align:center'>
       <div id=odometer>
       </div>
+
       <div>
-        <button id=toggle onClick='toggle()'>
-          &#9654;
-        </button>
-        <button onClick='reset()'>
-          &#8635;
-        </button>
+        <div style='display:flex; align-items:center; justify-content:center'>
+          <div>
+            <button id=toggle onClick='toggle()'>
+              &#9654;
+            </button>
+            <button onClick='reset()'>
+              &#8635;
+            </button>
+          </div>
+
+          <div style='display:flex; flex-direction:column'>
+            <button class=small onClick='inc()'>
+              +
+            </button>
+            <button class=small onClick='dec()'>
+              -
+            </button>
+        </div>
       </div>
+
       <div>
         <input id=slider type="range"  min="1" max="100" value=10
                onInput="updateSpeed(this.value)"/>
@@ -56,7 +73,6 @@
       function play () {
         if (!playing) {
           playing=true;
-          clearTimeout(lastTimeout);
           update();
           $('#toggle').html('&#9611;&#9611;');
         }
@@ -83,7 +99,7 @@
         });
 
         if (playing) {
-          console.log(speed);
+          // console.log(speed);
           number++;
           lastTimeout = setTimeout(update, speed);
         }
@@ -92,6 +108,7 @@
       function pause() {
         if (playing) {
           playing=false;
+          clearTimeout(lastTimeout);
           $('#toggle').html('&#9654;');
         }
       }
@@ -100,13 +117,33 @@
         pause();
         number=0;
         // in case there was one scheduled
-        clearTimeout(lastTimeout);
         update();
       };
 
       function updateSpeed(newvalue) {
         speed = 1000. / newvalue;
         // $('#speed').text(speed);
+      }
+
+      function inc() {
+        if (playing) {
+          clearTimeout(lastTimeout);
+          // no number++ here because update() does it anything
+        } else {
+          number++;
+        }
+        update();
+      }
+
+      function dec() {
+        if (playing) {
+          clearTimeout(lastTimeout);
+          // 2 to compense the number++ in update()
+          number-=2;
+        } else {
+          number--;
+        }
+        update();
       }
 
       update();
