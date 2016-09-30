@@ -4,22 +4,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <style>
       button {
-        font-size:3em;
+        font-size:6em;
         margin:0.1em;
         width:2em;
         text-align:'center';
       }
       button.small {
-        font-size:1.2em;
+        font-size:2.6em;
       }
       #odometer * {
-        font-size:7em;
+        font-size:14em;
         background-color:'darkgrey';
         border:3px solid black;
         margin:0.03em;
       }
       #slider {
-        width:20em;
+        width:35em;
       }
     </style>
   </head>
@@ -50,15 +50,24 @@
       </div>
 
       <div>
-        <input id=slider type="range"  min="1" max="100" value=10
+        <input id=slider type="range" min="0" max="1" value=0.1 step=0.01
                onInput="updateSpeed(this.value)"/>
         <!-- <p id=speed></p> -->
       </div>
     </div>
     <script>
+      //quadratic scale
+      var a=100.;
+      var y1=0.5;
+      var y2=100.;
+      var h = (y1-y2 + a) / 2. / a;
+      var k = y1 - a*h*h;
+      function sliderToSpeed(x) {
+        return a * Math.pow(x - h, 2) + k;
+      }
       var number = 0;
-      // TODO this value is duplicated in the slider
-      var speed = 10;
+      // copy pasted value from the slider's initial value
+      var speed = sliderToSpeed(0.1);
       var playing = false;
       var lastTimeout;
 
@@ -99,9 +108,8 @@
         });
 
         if (playing) {
-          // console.log(speed);
           number++;
-          lastTimeout = setTimeout(update, speed);
+          lastTimeout = setTimeout(update, 1000. / speed);
         }
       };
 
@@ -121,7 +129,7 @@
       };
 
       function updateSpeed(newvalue) {
-        speed = 1000. / newvalue;
+        speed = sliderToSpeed(newvalue);
         // $('#speed').text(speed);
       }
 
